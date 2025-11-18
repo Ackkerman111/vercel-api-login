@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Key Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      position: relative;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top left, rgba(106, 0, 255, 0.4), rgba(12, 1, 26, 0.7));
+      z-index: -2;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 50vmax 50vmax at center, transparent 0%, transparent 0%, rgba(0,0,0,.9) 100%);
+      z-index: -1;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+      animation: fadeIn 0.8s ease;
+      transition: all 0.4s ease;
+    }
+
+    /* === Moving Shine Border Effect === */
+    .container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 2px;
+      background: linear-gradient(90deg, transparent, white, transparent);
+      background-size: 200% 200%;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      animation: shineBorder 4s linear infinite;
+    }
+
+    @keyframes shineBorder {
+      0% {
+        clip-path: inset(0 0 98% 0);
+        background-position: 200% 0;
+      }
+      25% {
+        clip-path: inset(0 0 0 98%);
+        background-position: 100% 100%;
+      }
+      50% {
+        clip-path: inset(98% 0 0 0);
+        background-position: 0 200%;
+      }
+      75% {
+        clip-path: inset(0 98% 0 0);
+        background-position: 0 0;
+      }
+      100% {
+        clip-path: inset(0 0 98% 0);
+        background-position: 200% 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+
+
+    h1 {
+      font-size: 25px;
+      margin-bottom: 12px;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    p {
+      font-size: 15px;
+      color: #d1d5db;
+      margin-bottom: 35px;
+      line-height: 1.5;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .view {
+      animation: fadeIn 0.5s ease;
+    }
+
+    button {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 35px rgba(168, 85, 247, 0.7);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .key-display {
+      margin: 30px 0;
+    }
+
+    .key-label {
+      font-size: 13px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .key-box {
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.15));
+      border: 2px solid rgba(168, 85, 247, 0.5);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 16px;
+      word-wrap: break-word;
+      text-shadow: 0 2px 10px rgba(168, 85, 247, 0.8);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+      position: relative;
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+      }
+      50% {
+        box-shadow: 0 8px 35px rgba(168, 85, 247, 0.5);
+      }
+    }
+
+    .copy-btn {
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 12px 28px;
+      font-size: 14px;
+      box-shadow: none;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .success-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+      animation: bounceIn 0.6s ease;
+      display: none;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .back-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      margin-top: 20px;
+      font-size: 14px;
+      padding: 12px 28px;
+      box-shadow: none;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 12px;
+      color: #999;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 400px) {
+      h1 { font-size: 24px; }
+      button { font-size: 15px; }
+      .container { padding: 30px; }
+      .logo { width: 60px; height: 60px; font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="vignette"></div>
+  <div class="container">
+    <!-- Initial View -->
+    <div id="initialView" class="view">
+      <h1>KeyGenerator</h1>
+      <p>Click below button to generate a key.</p>
+      <button onclick="generateKey()">Generate Key</button>
+      <footer>© 2025 AckmvnCheats</footer>
+    </div>
+
+    <!-- Key Display View -->
+    <div id="keyView" class="view hidden">
+      <h1>Key Generated!</h1>
+      <p>Your access key has been created successfully</p>
+      
+      <div class="key-display">
+        <div class="key-label">Your Access Key</div>
+        <div class="key-box" id="keyValue">Loading...</div>
+      </div>
+      
+      <button class="copy-btn" onclick="copyKey()">Copy Key</button>
+      <button class="back-btn" onclick="showInitialView()">← Generate Another</button>
+      
+      <footer style="margin-top: 30px;">© 2025 AckmvnCheats</footer>
+    </div>
+  </div>
+
+  <script>
+    let currentKey = '';
+
+    function showInitialView() {
+      document.getElementById('initialView').classList.remove('hidden');
+      document.getElementById('keyView').classList.add('hidden');
+    }
+
+    function showKeyView() {
+      document.getElementById('initialView').classList.add('hidden');
+      document.getElementById('keyView').classList.remove('hidden');
+    }
+
+    async function generateKey() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      
+      try {
+        const res = await fetch('generate');
+        const data = await res.json();
+        
+        currentKey = data.message;
+        document.getElementById('keyValue').textContent = data.message;
+        
+        showKeyView();
+      } catch (error) {
+        alert('Connection error. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate Key';
+      }
+    }
+
+    function copyKey() {
+      navigator.clipboard.writeText(currentKey).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.style.background = 'rgba(34, 197, 94, 0.3)';
+        btn.style.borderColor = 'rgba(34, 197, 94, 0.6)';
+        btn.textContent = '✓ Copied!';
+        
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      }).catch(() => {
+        alert('Failed to copy. Please copy manually.');
+      });
+    }
+  </script>
+</body>
+</html>
