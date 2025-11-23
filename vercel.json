@@ -2,8 +2,13 @@
   "version": 2,
   "functions": {
     "api/*.js": {
+      "runtime": "nodejs18.x",
       "memory": 128,
       "maxDuration": 10
     }
-  }
+  },
+  "routes": [
+    { "src": "/api/generate", "dest": "/api/generate.js" },
+    { "src": "/api/verify", "dest": "/api/verify.js" }
+  ]
 }
